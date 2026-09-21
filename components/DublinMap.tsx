@@ -62,7 +62,7 @@ const FitBounds = ({ pins }: { pins: DublinMapPin[] }) => {
 const DublinMap = ({ pins, activePinId, onSelectPin }: DublinMapProps) => {
   return (
     <div className="w-full mb-10 md:mb-14">
-      <div className="relative aspect-[4/3] sm:aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-soft">
+      <div className="relative z-0 aspect-[4/3] sm:aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-soft">
         <MapContainer
           center={[53.3498, -6.2603]}
           zoom={10}
