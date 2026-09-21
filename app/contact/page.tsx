@@ -15,36 +15,45 @@ import {
   Star,
   MessageCircle,
 } from "lucide-react";
+import { sendQuoteRequest } from "@/lib/sendQuoteRequest";
 
 export default function QuoteForm() {
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
     phone: "",
-    password: "",
     eircode: "",
   });
 
   const [toastMessage, setToastMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (
+  const handleSubmit = async (
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
       | React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
-    setToastMessage(
-      "Quote Request Submitted! We'll contact you within 24 hours to discuss your project."
-    );
-    setFormData({
-      fullname: "",
-      email: "",
-      phone: "",
-      password: "",
-      eircode: "",
-    });
-    // Clear toast after 5 seconds
-    setTimeout(() => setToastMessage(""), 5000);
+    setIsSubmitting(true);
+    try {
+      await sendQuoteRequest({ formType: "quote", ...formData });
+      setToastMessage(
+        "Quote Request Submitted! We'll contact you within 24 hours to discuss your project."
+      );
+      setFormData({
+        fullname: "",
+        email: "",
+        phone: "",
+        eircode: "",
+      });
+    } catch {
+      setToastMessage(
+        "Something went wrong sending your request. Please call or email us directly."
+      );
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setToastMessage(""), 5000);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -218,9 +227,10 @@ export default function QuoteForm() {
                       variant="cta"
                       className="w-full transform hover:scale-105 transition-all duration-300"
                       size="lg"
+                      disabled={isSubmitting}
                     >
                       <Send className="mr-2 h-5 w-5" />
-                      Send Quote Request
+                      {isSubmitting ? "Sending..." : "Send Quote Request"}
                     </Button>
                   </div>
                 </CardContent>

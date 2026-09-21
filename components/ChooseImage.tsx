@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { sendQuoteRequest } from "@/lib/sendQuoteRequest";
 import Image from "next/image";
 
 // Gallery Images
@@ -49,6 +50,8 @@ const ChooseImage = () => {
     eircode: "",
     selectedProject: "",
   });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [toastMessage, setToastMessage] = React.useState("");
 
   const handleImageClick = (projectId: number) => {
     const project = projects.find((p) => p.id === projectId);
@@ -67,25 +70,48 @@ const ChooseImage = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Handle form submission logic here
-    setIsModalOpen(false);
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      eircode: "",
-      selectedProject: "",
-    });
+    setIsSubmitting(true);
+    try {
+      await sendQuoteRequest({
+        formType: "project-selection",
+        fullname: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        eircode: formData.eircode,
+        project: formData.selectedProject,
+      });
+      setIsModalOpen(false);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        eircode: "",
+        selectedProject: "",
+      });
+      setToastMessage(
+        "Request submitted! We'll contact you within 24 hours to discuss your project."
+      );
+    } catch {
+      setToastMessage(
+        "Something went wrong sending your request. Please call or email us directly."
+      );
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setToastMessage(""), 5000);
+    }
   };
 
   const selectedProject = projects.find((p) => p.id === selectedImage);
 
   return (
     <section className={`py-5 md:py-10 bg-background`}>
+      {toastMessage && (
+        <div className="fixed top-4 left-4 right-4 z-50 bg-green-500 text-white p-4 rounded-lg shadow-lg animate-pulse">
+          {toastMessage}
+        </div>
+      )}
       <div className="container mx-auto px-4">
         {/* Card Container wrapping all content */}
         <div className="bg-card rounded-2xl p-6 md:p-8 lg:p-12 shadow-soft hover:shadow-elegant transition-all duration-300">
@@ -292,9 +318,10 @@ const ChooseImage = () => {
                       variant="cta"
                       size="lg"
                       className="w-full text-sm sm:text-base"
+                      disabled={isSubmitting}
                     >
                       <Send className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                      Claim your Discount!
+                      {isSubmitting ? "Sending..." : "Claim your Discount!"}
                     </Button>
                   </form>
                 </CardContent>
