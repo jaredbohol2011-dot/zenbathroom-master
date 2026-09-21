@@ -11,7 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import DublinMap from "@/components/DublinMap";
+import dynamic from "next/dynamic";
+
+const DublinMap = dynamic(() => import("@/components/DublinMap"), {
+  ssr: false,
+});
 
 // Project Images
 // Project 1 Images (13 images)
@@ -97,8 +101,8 @@ const ProjectsGallery = () => {
       ],
       description: "Victorian Green Bathroom",
       neighborhood: "Ranelagh",
-      mapX: 38,
-      mapY: 52,
+      lat: 53.3242,
+      lng: -6.2536,
     },
     {
       id: 2,
@@ -118,8 +122,8 @@ const ProjectsGallery = () => {
       ],
       description: "Scandinavian Bathroom",
       neighborhood: "Blackrock",
-      mapX: 48,
-      mapY: 64,
+      lat: 53.3021,
+      lng: -6.1789,
     },
     {
       id: 3,
@@ -136,8 +140,8 @@ const ProjectsGallery = () => {
       ],
       description: "Black and White Bathroom",
       neighborhood: "Dalkey",
-      mapX: 46,
-      mapY: 80,
+      lat: 53.2773,
+      lng: -6.103,
     },
     {
       id: 4,
@@ -157,8 +161,8 @@ const ProjectsGallery = () => {
       ],
       description: "Navy Victorian Bathroom",
       neighborhood: "Howth",
-      mapX: 80,
-      mapY: 26,
+      lat: 53.3903,
+      lng: -6.0656,
     },
     {
       id: 5,
@@ -178,8 +182,8 @@ const ProjectsGallery = () => {
       ],
       description: "Small Emerald Green",
       neighborhood: "Malahide",
-      mapX: 60,
-      mapY: 10,
+      lat: 53.4506,
+      lng: -6.1519,
     },
   ];
 
@@ -360,8 +364,8 @@ const ProjectsGallery = () => {
               id: p.id,
               title: p.title,
               neighborhood: p.neighborhood,
-              mapX: p.mapX,
-              mapY: p.mapY,
+              lat: p.lat,
+              lng: p.lng,
             }))}
             activePinId={activePinId}
             onSelectPin={handlePinClick}

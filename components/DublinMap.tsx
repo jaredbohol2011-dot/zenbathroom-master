@@ -1,15 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { MapPin } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { MapContainer, TileLayer, Marker, Tooltip, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 export interface DublinMapPin {
   id: number;
   title: string;
   neighborhood: string;
-  mapX: number; // 0-100, percentage across the map
-  mapY: number; // 0-100, percentage down the map
+  lat: number;
+  lng: number;
 }
 
 interface DublinMapProps {
@@ -18,95 +19,66 @@ interface DublinMapProps {
   onSelectPin: (id: number) => void;
 }
 
-const DublinMap = ({ pins, activePinId, onSelectPin }: DublinMapProps) => {
-  const [hoveredId, setHoveredId] = React.useState<number | null>(null);
+const PIN_FILL = "#5a3d24"; // matches --primary (rich brown)
+const PIN_STROKE = "#f5efe3"; // matches --card (warm cream)
 
+function createPinIcon(active: boolean) {
+  const size = active ? 38 : 30;
+  const html = `
+    <div style="transform-origin: bottom center; transition: transform 150ms ease;">
+      <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.35));">
+        <path d="M12 22s7-7.58 7-12.5A7 7 0 0 0 5 9.5C5 14.42 12 22 12 22Z" fill="${PIN_FILL}" stroke="${PIN_STROKE}" stroke-width="1.2"/>
+        <circle cx="12" cy="9.5" r="2.6" fill="${PIN_STROKE}"/>
+      </svg>
+    </div>
+  `;
+  return L.divIcon({
+    html,
+    className: "",
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size],
+  });
+}
+
+// Fit the map to show every pin once, on first render
+const FitBounds = ({ pins }: { pins: DublinMapPin[] }) => {
+  const map = useMap();
+  React.useEffect(() => {
+    if (pins.length === 0) return;
+    const bounds = L.latLngBounds(pins.map((p) => [p.lat, p.lng] as [number, number]));
+    map.fitBounds(bounds, { padding: [50, 50] });
+  }, [map, pins]);
+  return null;
+};
+
+const DublinMap = ({ pins, activePinId, onSelectPin }: DublinMapProps) => {
   return (
     <div className="max-w-3xl mx-auto mb-10 md:mb-14">
-      <div className="relative aspect-square sm:aspect-[6/5] w-full overflow-hidden rounded-2xl shadow-soft bg-[#cfe3ea]">
-        {/* Stylized illustrated coastline */}
-        <svg
-          viewBox="0 0 100 100"
-          preserveAspectRatio="xMidYMid slice"
-          className="absolute inset-0 w-full h-full"
-          aria-hidden="true"
+      <div className="relative aspect-square sm:aspect-[6/5] w-full overflow-hidden rounded-2xl shadow-soft">
+        <MapContainer
+          center={[53.3498, -6.2603]}
+          zoom={10}
+          scrollWheelZoom={false}
+          className="h-full w-full"
         >
-          <rect x="0" y="0" width="100" height="100" fill="#cfe3ea" />
-          <path
-            d="M0,0 L50,0 L68,8 L65,14 L72,20 L88,24 L80,30 L68,34 L62,42 L58,50 L60,58 L56,66 L58,74 L54,80 L58,88 L50,96 L50,100 L0,100 Z"
-            fill="hsl(41 30% 88%)"
-            stroke="hsl(25 25% 70%)"
-            strokeWidth="0.5"
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {/* Liffey */}
-          <path
-            d="M20,49 C30,49.5 44,49.5 58,50"
-            fill="none"
-            stroke="hsl(200 35% 72%)"
-            strokeWidth="1"
-          />
-          <text
-            x="30"
-            y="46"
-            fontSize="3.2"
-            fill="hsl(25 35% 40%)"
-            fontFamily="serif"
-            fontWeight="600"
-          >
-            Dublin
-          </text>
-          <text
-            x="72"
-            y="55"
-            fontSize="2.6"
-            fill="hsl(200 40% 45%)"
-            fontFamily="serif"
-            fontStyle="italic"
-          >
-            Dublin Bay
-          </text>
-        </svg>
-
-        {/* Pins */}
-        {pins.map((pin) => {
-          const isActive = pin.id === activePinId;
-          const isHovered = pin.id === hoveredId;
-          return (
-            <button
+          <FitBounds pins={pins} />
+          {pins.map((pin) => (
+            <Marker
               key={pin.id}
-              type="button"
-              onClick={() => onSelectPin(pin.id)}
-              onMouseEnter={() => setHoveredId(pin.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              className="absolute -translate-x-1/2 -translate-y-full flex flex-col items-center group focus:outline-none"
-              style={{ left: `${pin.mapX}%`, top: `${pin.mapY}%` }}
-              aria-label={`View ${pin.title} in ${pin.neighborhood}`}
+              position={[pin.lat, pin.lng]}
+              icon={createPinIcon(pin.id === activePinId)}
+              eventHandlers={{ click: () => onSelectPin(pin.id) }}
             >
-              <span
-                className={cn(
-                  "whitespace-nowrap mb-1 rounded-full bg-card/90 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-primary shadow-soft transition-all duration-200",
-                  isActive || isHovered
-                    ? "opacity-100 scale-105"
-                    : "opacity-90 sm:opacity-0 sm:group-hover:opacity-100"
-                )}
-              >
+              <Tooltip direction="top" offset={[0, -28]}>
                 {pin.neighborhood}
-              </span>
-              <span className="relative flex items-center justify-center">
-                {isActive && (
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-primary/40 animate-ping" />
-                )}
-                <MapPin
-                  className={cn(
-                    "relative h-7 w-7 sm:h-8 sm:w-8 drop-shadow-md transition-transform duration-200 fill-primary text-primary-foreground stroke-[1.5]",
-                    (isActive || isHovered) && "scale-125",
-                    "group-hover:scale-125"
-                  )}
-                />
-              </span>
-            </button>
-          );
-        })}
+              </Tooltip>
+            </Marker>
+          ))}
+        </MapContainer>
       </div>
       <p className="text-center text-xs sm:text-sm text-muted-foreground mt-3">
         Click a pin to view that completed project
