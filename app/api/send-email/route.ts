@@ -47,7 +47,9 @@ export async function POST(request: Request) {
   const subject =
     formType === "project-selection"
       ? `New project inquiry: ${project || "Unknown project"}`
-      : "New quote request from website";
+      : formType === "led-niche-promotion"
+        ? "LED Niche promotion request"
+        : "New quote request from website";
 
   const html = `
     <h2>${escapeHtml(subject)}</h2>

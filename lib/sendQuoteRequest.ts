@@ -1,5 +1,5 @@
 export type QuoteRequestPayload = {
-  formType: "quote" | "project-selection";
+  formType: "quote" | "project-selection" | "led-niche-promotion";
   fullname: string;
   email: string;
   phone: string;
