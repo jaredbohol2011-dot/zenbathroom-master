@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import DublinMap from "@/components/DublinMap";
 
 // Project Images
 // Project 1 Images (13 images)
@@ -95,6 +96,9 @@ const ProjectsGallery = () => {
         project1_13,
       ],
       description: "Victorian Green Bathroom",
+      neighborhood: "Ranelagh",
+      mapX: 38,
+      mapY: 52,
     },
     {
       id: 2,
@@ -113,6 +117,9 @@ const ProjectsGallery = () => {
         project2_10,
       ],
       description: "Scandinavian Bathroom",
+      neighborhood: "Blackrock",
+      mapX: 48,
+      mapY: 64,
     },
     {
       id: 3,
@@ -128,6 +135,9 @@ const ProjectsGallery = () => {
         project3_7,
       ],
       description: "Black and White Bathroom",
+      neighborhood: "Dalkey",
+      mapX: 46,
+      mapY: 80,
     },
     {
       id: 4,
@@ -146,6 +156,9 @@ const ProjectsGallery = () => {
         project4_10,
       ],
       description: "Navy Victorian Bathroom",
+      neighborhood: "Howth",
+      mapX: 80,
+      mapY: 26,
     },
     {
       id: 5,
@@ -164,10 +177,14 @@ const ProjectsGallery = () => {
         project5_10,
       ],
       description: "Small Emerald Green",
+      neighborhood: "Malahide",
+      mapX: 60,
+      mapY: 10,
     },
   ];
 
   const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [activePinId, setActivePinId] = React.useState<number | null>(null);
   const [selectedProject, setSelectedProject] = React.useState<
     (typeof projects)[0] | null
   >(null);
@@ -254,6 +271,16 @@ const ProjectsGallery = () => {
     setIsModalOpen(true);
   };
 
+  // Handle map pin click: highlight the pin, sync the carousel, and open the gallery
+  const handlePinClick = (id: number) => {
+    const project = projects.find((p) => p.id === id);
+    if (!project) return;
+    setActivePinId(id);
+    const projectIndex = projects.findIndex((p) => p.id === id);
+    if (projectIndex !== -1) setCurrentIndex(projectIndex);
+    handleProjectClick(project);
+  };
+
   // Handle modal image change
   const handleThumbnailClick = (imageIndex: number) => {
     setSelectedImageIndex(imageIndex);
@@ -326,6 +353,19 @@ const ProjectsGallery = () => {
               Explore our portfolio of stunning bathroom transformations
             </p>
           </div>
+
+          {/* Dublin Map */}
+          <DublinMap
+            pins={projects.map((p) => ({
+              id: p.id,
+              title: p.title,
+              neighborhood: p.neighborhood,
+              mapX: p.mapX,
+              mapY: p.mapY,
+            }))}
+            activePinId={activePinId}
+            onSelectPin={handlePinClick}
+          />
 
           {/* Carousel Container */}
           <div className="relative max-w-6xl mx-auto">
