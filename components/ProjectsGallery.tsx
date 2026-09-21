@@ -219,7 +219,7 @@ const ProjectsGallery = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setCurrentIndex((prevIndex) =>
-      prevIndex === projects.length - 1 ? 0 : prevIndex + 1
+      prevIndex === projects.length - 1 ? 0 : prevIndex + 1,
     );
     setTimeout(() => setIsTransitioning(false), 500);
   };
@@ -228,7 +228,7 @@ const ProjectsGallery = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? projects.length - 1 : prevIndex - 1
+      prevIndex === 0 ? projects.length - 1 : prevIndex - 1,
     );
     setTimeout(() => setIsTransitioning(false), 500);
   };
@@ -294,14 +294,14 @@ const ProjectsGallery = () => {
   const nextModalImage = () => {
     if (!selectedProject) return;
     setSelectedImageIndex((prevIndex) =>
-      prevIndex === selectedProject.allImages.length - 1 ? 0 : prevIndex + 1
+      prevIndex === selectedProject.allImages.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
   const prevModalImage = () => {
     if (!selectedProject) return;
     setSelectedImageIndex((prevIndex) =>
-      prevIndex === 0 ? selectedProject.allImages.length - 1 : prevIndex - 1
+      prevIndex === 0 ? selectedProject.allImages.length - 1 : prevIndex - 1,
     );
   };
 
@@ -358,183 +358,188 @@ const ProjectsGallery = () => {
             </p>
           </div>
 
-          {/* Dublin Map */}
-          <DublinMap
-            pins={projects.map((p) => ({
-              id: p.id,
-              title: p.title,
-              neighborhood: p.neighborhood,
-              lat: p.lat,
-              lng: p.lng,
-            }))}
-            activePinId={activePinId}
-            onSelectPin={handlePinClick}
-          />
+          {/* Map + Carousel share one width so their edges align */}
+          <div className="max-w-4xl mx-auto">
+            {/* Dublin Map */}
+            <DublinMap
+              pins={projects.map((p) => ({
+                id: p.id,
+                title: p.title,
+                neighborhood: p.neighborhood,
+                lat: p.lat,
+                lng: p.lng,
+              }))}
+              activePinId={activePinId}
+              onSelectPin={handlePinClick}
+            />
 
-          {/* Carousel Container */}
-          <div className="relative max-w-6xl mx-auto">
-            {/* Navigation Arrows */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/30 hover:bg-white/50 shadow-soft hover:shadow-elegant transition-all duration-300 h-10 w-10 md:h-12 md:w-12 disabled:opacity-50"
-              onClick={prevSlide}
-              disabled={isTransitioning}
-            >
-              <ChevronLeft className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-            </Button>
+            {/* Carousel Container */}
+            <div className="relative">
+              {/* Navigation Arrows */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/30 hover:bg-white/50 shadow-soft hover:shadow-elegant transition-all duration-300 h-10 w-10 md:h-12 md:w-12 disabled:opacity-50"
+                onClick={prevSlide}
+                disabled={isTransitioning}
+              >
+                <ChevronLeft className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+              </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/30 hover:bg-white/50 shadow-soft hover:shadow-elegant transition-all duration-300 h-10 w-10 md:h-12 md:w-12 disabled:opacity-50"
-              onClick={nextSlide}
-              disabled={isTransitioning}
-            >
-              <ChevronRight className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/30 hover:bg-white/50 shadow-soft hover:shadow-elegant transition-all duration-300 h-10 w-10 md:h-12 md:w-12 disabled:opacity-50"
+                onClick={nextSlide}
+                disabled={isTransitioning}
+              >
+                <ChevronRight className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+              </Button>
 
-            {/* Carousel Content */}
-            <div className="overflow-hidden rounded-lg">
-              {/* Mobile View - Single Image */}
-              <div className="block md:hidden">
-                <div className="relative w-full">
-                  <div
-                    className="flex transition-transform duration-500 ease-in-out"
-                    style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-                    onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
-                  >
-                    {projects.map((project, index) => (
-                      <div key={project.id} className="w-full flex-shrink-0">
-                        <div
-                          className="relative group cursor-pointer"
-                          onClick={() => handleProjectClick(project)}
-                        >
-                          <div className="aspect-[3/4] overflow-hidden rounded-lg">
-                            <Image
-                              src={project.mainImage}
-                              alt={project.title}
-                              loading="lazy"
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/40 transition-all duration-300" />
-                          </div>
-                          <div className="absolute bottom-0 left-0 right-0  p-4 md:p-6">
-                            <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
-                              {project.title}
-                            </h3>
-                            <p className="text-white/90 text-sm md:text-base leading-relaxed">
-                              {project.description}
-                            </p>
-                          </div>
-                          {/* Click indicator */}
-                          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-soft">
-                              <svg
-                                className="w-4 h-4 sm:w-5 sm:h-5 text-primary"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
-                                />
-                              </svg>
+              {/* Carousel Content */}
+              <div className="overflow-hidden rounded-lg">
+                {/* Mobile View - Single Image */}
+                <div className="block md:hidden">
+                  <div className="relative w-full">
+                    <div
+                      className="flex transition-transform duration-500 ease-in-out"
+                      style={{
+                        transform: `translateX(-${currentIndex * 100}%)`,
+                      }}
+                      onTouchStart={handleTouchStart}
+                      onTouchMove={handleTouchMove}
+                      onTouchEnd={handleTouchEnd}
+                    >
+                      {projects.map((project, index) => (
+                        <div key={project.id} className="w-full flex-shrink-0">
+                          <div
+                            className="relative group cursor-pointer"
+                            onClick={() => handleProjectClick(project)}
+                          >
+                            <div className="aspect-[16/9] overflow-hidden rounded-lg">
+                              <Image
+                                src={project.mainImage}
+                                alt={project.title}
+                                loading="lazy"
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                              <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/40 transition-all duration-300" />
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0  p-4 md:p-6">
+                              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                                {project.title}
+                              </h3>
+                              <p className="text-white/90 text-sm md:text-base leading-relaxed">
+                                {project.description}
+                              </p>
+                            </div>
+                            {/* Click indicator */}
+                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <div className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-soft">
+                                <svg
+                                  className="w-4 h-4 sm:w-5 sm:h-5 text-primary"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                                  />
+                                </svg>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Desktop View - Three Images */}
-              <div className="hidden md:block">
-                <div className="relative w-full">
-                  <div
-                    className="flex transition-transform duration-500 ease-in-out gap-6"
-                    style={{
-                      transform: `translateX(-${currentIndex * (100 / 3)}%)`,
-                    }}
-                  >
-                    {/* Render all projects for smooth infinite scroll */}
-                    {[...projects, ...projects, ...projects].map(
-                      (project, globalIndex) => {
-                        const projectIndex = globalIndex % projects.length;
-                        return (
-                          <div
-                            key={`${project.id}-${globalIndex}`}
-                            className="w-1/3 flex-shrink-0 group cursor-pointer"
-                            onClick={() => handleProjectClick(project)}
-                          >
-                            <div className="relative">
-                              <div className="aspect-[3/4] overflow-hidden rounded-lg">
-                                <Image
-                                  src={project.mainImage}
-                                  alt={project.title}
-                                  loading="lazy"
-                                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0  transition-all duration-300" />
-                              </div>
-                              <div className="absolute bottom-0 left-0 right-0  to-transparent p-4 lg:p-6">
-                                <h3 className="text-lg lg:text-xl font-bold text-white mb-2">
-                                  {project.title}
-                                </h3>
-                                <p className="text-white/90 text-sm lg:text-base leading-relaxed">
-                                  {project.description}
-                                </p>
-                              </div>
-                              {/* Click indicator */}
-                              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-soft">
-                                  <svg
-                                    className="w-5 h-5 text-primary"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
-                                    />
-                                  </svg>
+                {/* Desktop View - Three Images */}
+                <div className="hidden md:block">
+                  <div className="relative w-full">
+                    <div
+                      className="flex transition-transform duration-500 ease-in-out gap-6"
+                      style={{
+                        transform: `translateX(-${currentIndex * (100 / 3)}%)`,
+                      }}
+                    >
+                      {/* Render all projects for smooth infinite scroll */}
+                      {[...projects, ...projects, ...projects].map(
+                        (project, globalIndex) => {
+                          const projectIndex = globalIndex % projects.length;
+                          return (
+                            <div
+                              key={`${project.id}-${globalIndex}`}
+                              className="w-1/3 flex-shrink-0 group cursor-pointer"
+                              onClick={() => handleProjectClick(project)}
+                            >
+                              <div className="relative">
+                                <div className="aspect-[16/9] overflow-hidden rounded-lg">
+                                  <Image
+                                    src={project.mainImage}
+                                    alt={project.title}
+                                    loading="lazy"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  />
+                                  <div className="absolute inset-0  transition-all duration-300" />
+                                </div>
+                                <div className="absolute bottom-0 left-0 right-0  to-transparent p-4 lg:p-6">
+                                  <h3 className="text-lg lg:text-xl font-bold text-white mb-2">
+                                    {project.title}
+                                  </h3>
+                                  <p className="text-white/90 text-sm lg:text-base leading-relaxed">
+                                    {project.description}
+                                  </p>
+                                </div>
+                                {/* Click indicator */}
+                                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                  <div className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-soft">
+                                    <svg
+                                      className="w-5 h-5 text-primary"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                                      />
+                                    </svg>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      }
-                    )}
+                          );
+                        },
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Pagination Dots */}
-            <div className="flex justify-center mt-6 md:mt-8 space-x-2">
-              {projects.map((_, index) => (
-                <button
-                  key={index}
-                  className={cn(
-                    "w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300",
-                    index === currentIndex
-                      ? "bg-primary scale-125"
-                      : "bg-primary/30 hover:bg-primary/50",
-                    isTransitioning && "pointer-events-none"
-                  )}
-                  onClick={() => goToSlide(index)}
-                  disabled={isTransitioning}
-                />
-              ))}
+              {/* Pagination Dots */}
+              <div className="flex justify-center mt-6 md:mt-8 space-x-2">
+                {projects.map((_, index) => (
+                  <button
+                    key={index}
+                    className={cn(
+                      "w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300",
+                      index === currentIndex
+                        ? "bg-primary scale-125"
+                        : "bg-primary/30 hover:bg-primary/50",
+                      isTransitioning && "pointer-events-none",
+                    )}
+                    onClick={() => goToSlide(index)}
+                    disabled={isTransitioning}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
@@ -611,7 +616,7 @@ const ProjectsGallery = () => {
                         "relative aspect-square overflow-hidden rounded-md transition-all duration-300 hover:scale-105",
                         index === selectedImageIndex
                           ? "ring-2 ring-primary shadow-elegant scale-105"
-                          : "hover:shadow-soft"
+                          : "hover:shadow-soft",
                       )}
                       onClick={() => handleThumbnailClick(index)}
                     >

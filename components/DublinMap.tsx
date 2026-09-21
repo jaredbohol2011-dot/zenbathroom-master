@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { MapContainer, TileLayer, Marker, Tooltip, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -45,7 +51,9 @@ const FitBounds = ({ pins }: { pins: DublinMapPin[] }) => {
   const map = useMap();
   React.useEffect(() => {
     if (pins.length === 0) return;
-    const bounds = L.latLngBounds(pins.map((p) => [p.lat, p.lng] as [number, number]));
+    const bounds = L.latLngBounds(
+      pins.map((p) => [p.lat, p.lng] as [number, number]),
+    );
     map.fitBounds(bounds, { padding: [50, 50] });
   }, [map, pins]);
   return null;
@@ -53,8 +61,8 @@ const FitBounds = ({ pins }: { pins: DublinMapPin[] }) => {
 
 const DublinMap = ({ pins, activePinId, onSelectPin }: DublinMapProps) => {
   return (
-    <div className="max-w-3xl mx-auto mb-10 md:mb-14">
-      <div className="relative aspect-square sm:aspect-[6/5] w-full overflow-hidden rounded-2xl shadow-soft">
+    <div className="w-full mb-10 md:mb-14">
+      <div className="relative aspect-[4/3] sm:aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-soft">
         <MapContainer
           center={[53.3498, -6.2603]}
           zoom={10}
