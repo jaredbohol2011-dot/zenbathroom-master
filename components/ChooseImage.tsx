@@ -85,11 +85,11 @@ const ChooseImage = () => {
         <DialogContent className="max-w-[95vw] sm:max-w-lg w-full max-h-[95vh] overflow-auto p-4 sm:p-6">
           <DialogHeader className="pb-2">
             <DialogTitle className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mt-4">
-              This season&apos;s promotion – Free LED Niche
+              Get a FREE LED Niche!
             </DialogTitle>
             <p className="text-sm sm:text-base text-muted-foreground mt-2">
-              Type in your details below to get a Free LED Niche included
-              with your renovation this season
+              Leave your details to book your FREE consultation and receive a
+              personalised quote today!
             </p>
           </DialogHeader>
 
@@ -108,19 +108,6 @@ const ChooseImage = () => {
             </div>
 
             <div>
-              <Label htmlFor="led-eircode" className="text-sm sm:text-base">
-                Eircode
-              </Label>
-              <Input
-                id="led-eircode"
-                value={formData.eircode}
-                onChange={(e) => handleChange("eircode", e.target.value)}
-                required
-                className="mt-1"
-              />
-            </div>
-
-            <div>
               <Label htmlFor="led-phone" className="text-sm sm:text-base">
                 Phone Number
               </Label>
@@ -128,6 +115,19 @@ const ChooseImage = () => {
                 id="led-phone"
                 value={formData.phone}
                 onChange={(e) => handleChange("phone", e.target.value)}
+                required
+                className="mt-1"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="led-eircode" className="text-sm sm:text-base">
+                Eircode
+              </Label>
+              <Input
+                id="led-eircode"
+                value={formData.eircode}
+                onChange={(e) => handleChange("eircode", e.target.value)}
                 required
                 className="mt-1"
               />
