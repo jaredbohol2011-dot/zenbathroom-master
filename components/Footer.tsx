@@ -89,7 +89,14 @@ export const Footer = () => {
           <div className="space-y-4">
             <h4 className="text-xl font-semibold mb-6">Quick Links</h4>
             <ul className="space-y-2">
-              <li></li>
+              <li>
+                <a
+                  href="/"
+                  className="hover:text-primary transition-colors text-sm"
+                >
+                  Home
+                </a>
+              </li>
               <li>
                 <a
                   href="#gallery"
