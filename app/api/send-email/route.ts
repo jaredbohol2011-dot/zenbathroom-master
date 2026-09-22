@@ -37,11 +37,22 @@ export async function POST(request: Request) {
     project?: string;
   };
 
-  if (!fullname || !email || !phone) {
+  if (!fullname || !phone) {
     return NextResponse.json(
-      { error: "Name, email, and phone are required." },
+      { error: "Name and phone are required." },
       { status: 400 }
     );
+  }
+
+  if (formType === "led-niche-promotion") {
+    if (!eircode) {
+      return NextResponse.json(
+        { error: "Eircode is required." },
+        { status: 400 }
+      );
+    }
+  } else if (!email) {
+    return NextResponse.json({ error: "Email is required." }, { status: 400 });
   }
 
   const subject =
@@ -54,7 +65,7 @@ export async function POST(request: Request) {
   const html = `
     <h2>${escapeHtml(subject)}</h2>
     <p><strong>Name:</strong> ${escapeHtml(fullname)}</p>
-    <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+    ${email ? `<p><strong>Email:</strong> ${escapeHtml(email)}</p>` : ""}
     <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
     ${eircode ? `<p><strong>Eircode:</strong> ${escapeHtml(eircode)}</p>` : ""}
     ${project ? `<p><strong>Selected project:</strong> ${escapeHtml(project)}</p>` : ""}
@@ -65,7 +76,7 @@ export async function POST(request: Request) {
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: TO_EMAIL,
-      replyTo: email,
+      ...(email ? { replyTo: email } : {}),
       subject,
       html,
     });

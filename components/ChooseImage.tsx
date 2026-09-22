@@ -19,7 +19,7 @@ const ChooseImage = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [formData, setFormData] = React.useState({
     name: "",
-    email: "",
+    eircode: "",
     phone: "",
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -39,11 +39,11 @@ const ChooseImage = () => {
       await sendQuoteRequest({
         formType: "led-niche-promotion",
         fullname: formData.name,
-        email: formData.email,
+        eircode: formData.eircode,
         phone: formData.phone,
       });
       setIsModalOpen(false);
-      setFormData({ name: "", email: "", phone: "" });
+      setFormData({ name: "", eircode: "", phone: "" });
       setToastMessage(
         "Request submitted! We'll contact you within 24 hours to discuss your project."
       );
@@ -108,14 +108,13 @@ const ChooseImage = () => {
             </div>
 
             <div>
-              <Label htmlFor="led-email" className="text-sm sm:text-base">
-                Email
+              <Label htmlFor="led-eircode" className="text-sm sm:text-base">
+                Eircode
               </Label>
               <Input
-                id="led-email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleChange("email", e.target.value)}
+                id="led-eircode"
+                value={formData.eircode}
+                onChange={(e) => handleChange("eircode", e.target.value)}
                 required
                 className="mt-1"
               />

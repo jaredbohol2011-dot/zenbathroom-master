@@ -1,8 +1,8 @@
 export type QuoteRequestPayload = {
   formType: "quote" | "project-selection" | "led-niche-promotion";
   fullname: string;
-  email: string;
   phone: string;
+  email?: string;
   eircode?: string;
   project?: string;
 };
